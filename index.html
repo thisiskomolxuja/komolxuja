@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>VIGI Support</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{
+  --bg:#070d16; --bg2:#0d1724; --card:#111d2c; --line:rgba(120,170,220,.14);
+  --text:#e9f1fa; --hint:#8396ab; --accent:#00c8ff; --accent2:#7b5cff; --accentT:#03121c;
+  --ok:#2ee59d; --warn:#ffb547; --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+body{min-height:100vh;padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+a{color:var(--accent);text-decoration:none}
+.wrap{max-width:720px;margin:0 auto;padding:14px 16px}
+.page{display:none;animation:fade .25s ease}
+.page.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* bosh sahifa */
+.hero{position:relative;overflow:hidden;border-radius:24px;padding:22px 20px 20px;margin-bottom:16px;
+  background:radial-gradient(120% 140% at 100% 0%,rgba(123,92,255,.55),transparent 55%),
+             radial-gradient(120% 140% at 0% 100%,rgba(0,200,255,.45),transparent 55%),var(--bg2);
+  border:1px solid var(--line)}
+.hero:after{content:"";position:absolute;inset:0;background:
+  linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px) 0 0/22px 22px,
+  linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px) 0 0/22px 22px;
+  -webkit-mask:linear-gradient(160deg,#000,transparent 70%);mask:linear-gradient(160deg,#000,transparent 70%);pointer-events:none}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.5px;font-size:13px;color:#bfe9ff;position:relative;z-index:1}
+.logo i{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-style:normal;font-size:16px}
+.hero h1{margin:16px 0 6px;font-size:24px;line-height:1.2;position:relative;z-index:1}
+.hero p{margin:0;color:#b9c8d8;font-size:14px;position:relative;z-index:1}
+.hello{color:#fff}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{position:relative;text-align:left;padding:16px 14px;border-radius:var(--r);background:var(--card);border:1px solid var(--line);min-height:112px;display:flex;flex-direction:column;justify-content:flex-start;transition:transform .12s}
+.tile.wide{grid-column:1/-1;flex-direction:row;align-items:center;gap:14px;min-height:0}
+.tile.wide b{margin-top:0}
+.tile:active{transform:scale(.97)}
+.tile .ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:21px;background:rgba(0,200,255,.12)}
+.tile b{display:block;font-size:15px;margin-top:12px}
+.tile small{color:var(--hint);font-size:12px}
+.tile.big{grid-column:1/-1;flex-direction:row;align-items:center;gap:14px;min-height:0;
+  background:linear-gradient(135deg,rgba(0,200,255,.22),rgba(123,92,255,.22)),var(--card)}
+.tile.big .ic{width:52px;height:52px;font-size:26px;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+.tile.big b{margin:0 0 2px}
+.tile .go{margin-left:auto;color:var(--hint);font-size:22px}
+.foot{color:var(--hint);font-size:12px;text-align:center;margin:18px 0 4px}
+
+/* sarlavha */
+.head{display:flex;align-items:center;justify-content:space-between;margin:2px 0 12px}
+.head h2{margin:0;font-size:21px}
+.count{color:var(--hint);font-size:13px}
+.search{position:sticky;top:0;z-index:5;background:var(--bg);padding:6px 0 10px}
+.search input{width:100%;padding:13px 14px 13px 42px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--text);font:inherit;outline:none}
+.search input:focus{border-color:var(--accent)}
+.search .s-ic{position:absolute;left:14px;top:18px;color:var(--hint)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:7px 13px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--hint);font-size:13px;white-space:nowrap}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--accentT);font-weight:600}
+
+/* tovarlar */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.pc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;text-align:left;display:flex;flex-direction:column}
+.pc:active{transform:scale(.98)}
+.pc .im{aspect-ratio:1/1;background:#fff;display:grid;place-items:center;overflow:hidden}
+.pc .im img{width:88%;height:88%;object-fit:contain}
+.pc .im .no{font-size:34px;opacity:.35;color:#456}
+.pc .tx{padding:10px 11px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
+.pc .md{font-weight:700;font-size:14px;word-break:break-word}
+.pc .nm{color:var(--hint);font-size:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pc .pr{margin-top:auto;padding-top:4px;font-weight:700;color:var(--ok);font-size:14px}
+.pc .pr.ask{color:var(--warn);font-weight:600;font-size:12px}
+.empty{text-align:center;color:var(--hint);padding:40px 10px}
+.more{height:40px}
+
+/* kartochkalar */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:15px;margin-bottom:12px}
+.card h3{margin:0 0 4px;font-size:16px}
+.reg{font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--accent);margin:18px 2px 8px}
+.reg:first-child{margin-top:4px}
+.row{display:flex;gap:8px;align-items:flex-start;color:#c6d3e0;font-size:14px;margin-top:6px}
+.row span:first-child{flex:none;width:20px;text-align:center}
+.note{color:var(--hint);font-size:13px;margin-top:8px}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn{flex:1;min-width:120px;padding:11px 12px;border-radius:12px;background:rgba(0,200,255,.12);color:var(--accent);font-weight:600;font-size:14px;text-align:center}
+.btn.pri{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+
+/* tovar oynasi */
+.sheet{position:fixed;inset:0;z-index:50;background:var(--bg);overflow-y:auto;transform:translateY(100%);transition:transform .28s cubic-bezier(.2,.8,.2,1);padding-bottom:calc(90px + env(safe-area-inset-bottom))}
+.sheet.on{transform:none}
+.sheet .pic{background:#fff;display:grid;place-items:center;height:300px;position:relative}
+.sheet .pic img{max-width:80%;max-height:260px;object-fit:contain}
+.close{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;font-size:18px}
+.sheet .body{padding:18px 16px}
+.cat{color:var(--accent);font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.sheet h2{margin:6px 0 4px;font-size:22px;word-break:break-word}
+.sheet .sub{color:var(--hint);margin-bottom:14px}
+.price{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,rgba(46,229,157,.13),rgba(0,200,255,.08));border:1px solid rgba(46,229,157,.25);margin-bottom:16px}
+.price b{font-size:22px;color:var(--ok)}
+.price small{color:var(--hint);font-size:12px}
+.specs{border-radius:16px;overflow:hidden;border:1px solid var(--line);margin-bottom:14px}
+.specs div{display:flex;justify-content:space-between;gap:14px;padding:11px 14px;font-size:14px;background:var(--card)}
+.specs div+div{border-top:1px solid var(--line)}
+.specs span{color:var(--hint)}
+.specs b{text-align:right;font-weight:600}
+.feats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.feats span{padding:6px 10px;border-radius:10px;background:var(--card);border:1px solid var(--line);font-size:12px;color:#c6d3e0}
+.sup{color:var(--hint);font-size:12px;margin-top:6px}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:60;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 35%);display:none;gap:10px}
+.sheet.on ~ .bar{display:flex}
+
+/* pastki menyu */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;background:rgba(10,17,27,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;color:var(--hint);font-size:11px;border-radius:12px}
+.tab .ti{font-size:20px;filter:grayscale(1);opacity:.7}
+.tab.on{color:var(--accent)}
+.tab.on .ti{filter:none;opacity:1}
+
+.loader{display:grid;place-items:center;min-height:60vh;color:var(--hint)}
+.spin{width:38px;height:38px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:sp 1s linear infinite;margin:0 auto 12px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#1d2b3c;color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;z-index:99;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90%}
+.toast.on{opacity:1}
+
+/* yorug' mavzu (Telegram yorug' rejimda) */
+body.light{--bg:#f2f5f9;--bg2:#e7eef7;--card:#ffffff;--line:rgba(20,40,70,.1);--text:#0f1b2a;--hint:#6a7a8c;--accentT:#fff}
+body.light .row,body.light .feats span{color:#33475c}
+body.light .tabs{background:rgba(255,255,255,.92)}
+body.light .hero p{color:#3b4f66}
+body.light .hello{color:#0f1b2a}
+body.light .logo{color:#2a4a6b}
+body.light .toast{background:#0f1b2a}
+</style>
+</head>
+<body>
+<div id="app"><div class="loader"><div><div class="spin"></div><div id="ldTxt">VIGI Support</div></div></div></div>
+<div class="sheet" id="sheet"></div>
+<div class="bar" id="bar"></div>
+<nav class="tabs" id="tabs" style="display:none"></nav>
+<div class="toast" id="toast"></div>
+
+<script>
+const tg = window.Telegram && window.Telegram.WebApp;
+const Q = new URLSearchParams(location.search);
+const LANG = ["uz","ru","en"].includes(Q.get("l")) ? Q.get("l")
+  : ({ru:"ru",uk:"ru",be:"ru",kk:"ru",en:"en"}[(tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code || "").slice(0,2)] || "uz");
+const ALLF = ["reset","product","stores","me","master"];
+const FEAT = new Set(Q.get("f") != null ? Q.get("f").split(",").filter(Boolean) : ALLF);
+const FROM_KB = Q.get("k") === "1";
+const VER = Q.get("v") || Date.now();
+
+const TX = {
+  uz:{hi:"Assalomu alaykum", hero:"TP-Link VIGI kameralari bo'yicha yordam, tovarlar va narxlar — bir joyda.",
+      home:"Bosh sahifa", prod:"Tovarlar", stores:"Manzillar", masters:"Ustalar",
+      reset:"Kamerani reset qilish", resetS:"QR kod rasmini yuboring — mutaxassis javob beradi",
+      prodS:"Narx va xarakteristika", storesS:"Rasmiy do'konlar", mastersS:"O'rnatish va sozlash",
+      me:"Men haqimda", meS:"Profil va tarix", war:"Kafolat xatlarim", warS:"PDF kafolat xatlari",
+      search:"Model yoki nom bo'yicha qidirish...", all:"Barchasi", found:"ta", none:"Hech narsa topilmadi",
+      ask:"Narxini so'rang", sum:"so'm", asof:"Narx {d} holatiga", passport:"📄 Pasport (PDF)", buy:"🏪 Qayerdan olish",
+      specs:"Xarakteristikalar", feats:"Imkoniyatlar", map:"🗺 Xaritada", call:"📞 Qo'ng'iroq", write:"✈️ Yozish",
+      supplier:"Rasmiy yetkazib beruvchi", updated:"Ma'lumot yangilangan", empty:"Hozircha ro'yxat bo'sh",
+      sent:"Botga o'tilmoqda...", locked:"Bu bo'lim siz uchun yopiq", load:"Yuklanmoqda...", err:"Ma'lumot yuklanmadi. Internetni tekshiring.", retry:"Qayta urinish", other:"Boshqa"},
+  ru:{hi:"Здравствуйте", hero:"Поддержка камер TP-Link VIGI, товары и цены — в одном месте.",
+      home:"Главная", prod:"Товары", stores:"Адреса", masters:"Мастера",
+      reset:"Сброс камеры", resetS:"Отправьте фото QR-кода — специалист ответит",
+      prodS:"Цены и характеристики", storesS:"Официальные магазины", mastersS:"Монтаж и настройка",
+      me:"Обо мне", meS:"Профиль и история", war:"Мои гарантии", warS:"Гарантийные письма PDF",
+      search:"Поиск по модели или названию...", all:"Все", found:"шт.", none:"Ничего не найдено",
+      ask:"Цену уточняйте", sum:"сум", asof:"Цена на {d}", passport:"📄 Паспорт (PDF)", buy:"🏪 Где купить",
+      specs:"Характеристики", feats:"Особенности", map:"🗺 На карте", call:"📞 Позвонить", write:"✈️ Написать",
+      supplier:"Официальный поставщик", updated:"Данные обновлены", empty:"Список пока пуст",
+      sent:"Переход в бот...", locked:"Этот раздел для вас недоступен", load:"Загрузка...", err:"Не удалось загрузить данные. Проверьте интернет.", retry:"Повторить", other:"Другое"},
+  en:{hi:"Hello", hero:"TP-Link VIGI camera support, products and prices — all in one place.",
+      home:"Home", prod:"Products", stores:"Stores", masters:"Installers",
+      reset:"Reset a camera", resetS:"Send a photo of the QR code — a specialist will reply",
+      prodS:"Prices and specs", storesS:"Official stores", mastersS:"Installation and setup",
+      me:"About me", meS:"Profile and history", war:"My warranties", warS:"PDF warranty letters",
+      search:"Search by model or name...", all:"All", found:"items", none:"Nothing found",
+      ask:"Ask for price", sum:"UZS", asof:"Price as of {d}", passport:"📄 Datasheet (PDF)", buy:"🏪 Where to buy",
+      specs:"Specifications", feats:"Features", map:"🗺 On map", call:"📞 Call", write:"✈️ Message",
+      supplier:"Official supplier", updated:"Data updated", empty:"The list is empty for now",
+      sent:"Opening the bot...", locked:"This section is not available to you", load:"Loading...", err:"Could not load data. Check your connection.", retry:"Retry", other:"Other"},
+}[LANG];
+document.documentElement.lang = LANG;
+
+const $ = id => document.getElementById(id);
+const h = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money = v => Number(v).toLocaleString("ru-RU").replace(/[\s,]/g, " ") + " " + TX.sum;
+const norm = s => String(s || "").toLowerCase().replace(/[\s\-_/.()]+/g, "");
+let D = null, page = "home", cat = "", query = "", shown = 0, list = [];
+
+function toast(m){ const t = $("toast"); t.textContent = m; t.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove("on"), 2200); }
+function haptic(k="light"){ try { tg.HapticFeedback.impactOccurred(k); } catch(e){} }
+
+/* ---------- Telegram sozlamalari ---------- */
+if (tg) {
+  tg.ready(); tg.expand();
+  const light = tg.colorScheme === "light";
+  document.body.classList.toggle("light", light);
+  try { tg.setHeaderColor(light ? "#f2f5f9" : "#070d16"); tg.setBackgroundColor(light ? "#f2f5f9" : "#070d16"); } catch(e){}
+  tg.onEvent("themeChanged", () => document.body.classList.toggle("light", tg.colorScheme === "light"));
+  tg.BackButton.onClick(back);
+}
+
+/* ---------- botga buyruq ---------- */
+function act(cmd, feature) {
+  if (feature && !FEAT.has(feature)) return toast(TX.locked);
+  haptic("medium");
+  if (tg && FROM_KB && tg.sendData) { try { tg.sendData(cmd); return; } catch(e){} }
+  const bot = D && D.meta.bot;
+  if (tg && bot) { toast(TX.sent); tg.openTelegramLink("https://t.me/" + bot + "?start=" + encodeURIComponent(cmd)); setTimeout(() => tg.close(), 400); }
+  else toast(TX.sent);
+}
+function openUrl(u){ if (tg && /^https?:/.test(u)) tg.openLink(u); else location.href = u; }
+function openTg(user){ const u = String(user).trim().replace(/^@/, "").replace(/^https?:\/\/t\.me\//, "");
+  if (tg) tg.openTelegramLink("https://t.me/" + u); else open("https://t.me/" + u); }
+
+/* ---------- navigatsiya ---------- */
+const TABS = [["home","🏠",TX.home],["prod","📦",TX.prod,"product"],["stores","🏪",TX.stores,"stores"],["masters","🛠",TX.masters,"master"]]
+  .filter(t => !t[3] || FEAT.has(t[3]));
+function go(p) {
+  page = p; haptic();
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("on", t.dataset.p === p));
+  render(); scrollTo(0, 0); syncBack();
+}
+function back() { if ($("sheet").classList.contains("on")) closeSheet(); else if (page !== "home") go("home"); }
+function syncBack() { if (!tg) return; ($("sheet").classList.contains("on") || page !== "home") ? tg.BackButton.show() : tg.BackButton.hide(); }
+
+/* ---------- sahifalar ---------- */
+function render() {
+  const app = $("app");
+  if (page === "home") {
+    const u = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
+    const tiles = [];
+    if (FEAT.has("reset")) tiles.push(`<button class="tile big" onclick="act('reset','reset')"><div class="ic">🔄</div><div><b>${TX.reset}</b><small>${TX.resetS}</small></div><span class="go">›</span></button>`);
+    if (FEAT.has("product")) tiles.push(tile("📦", TX.prod, `${D.products.length} · ${TX.prodS}`, "go('prod')"));
+    if (FEAT.has("stores")) tiles.push(tile("🏪", TX.stores, `${D.stores.length} · ${TX.storesS}`, "go('stores')"));
+    if (FEAT.has("master")) tiles.push(tile("🛠", TX.masters, TX.mastersS, "go('masters')"));
+    if (FEAT.has("me")) { tiles.push(tile("👤", TX.me, TX.meS, "act('me','me')")); tiles.push(tile("📄", TX.war, TX.warS, "act('war','me')")); }
+    const small = tiles.filter(x => !x.includes("tile big")).length;
+    if (small % 2) tiles[tiles.length - 1] = tiles[tiles.length - 1].replace('class="tile"', 'class="tile wide"');
+    app.innerHTML = `<div class="wrap page on">
+      <div class="hero"><div class="logo"><i>V</i>VIGI SUPPORT</div>
+        <h1>${TX.hi}${u && u.first_name ? `, <span class="hello">${h(u.first_name)}</span>` : ""} 👋</h1><p>${TX.hero}</p></div>
+      <div class="tiles">${tiles.join("")}</div>
+      <div class="foot">${D.meta.supplier ? `${TX.supplier}: <b>${h(D.meta.supplier)}</b><br>` : ""}${TX.updated}: ${h(D.meta.updated)}</div></div>`;
+  } else if (page === "prod") {
+    const cats = [...new Set(D.products.map(p => p.c).filter(Boolean))];
+    app.innerHTML = `<div class="wrap page on">
+      <div class="head"><h2>${TX.prod}</h2><span class="count" id="pc"></span></div>
+      <div class="search" style="position:sticky"><span class="s-ic">🔍</span><input id="q" type="search" placeholder="${TX.search}" value="${h(query)}" autocomplete="off"></div>
+      <div class="chips"><button class="chip ${cat ? "" : "on"}" data-c="">${TX.all}</button>${cats.map(c => `<button class="chip ${c === cat ? "on" : ""}" data-c="${h(c)}">${h(c)}</button>`).join("")}</div>
+      <div class="grid" id="grid"></div><div class="more" id="more"></div></div>`;
+    $("q").oninput = e => { clearTimeout(render.t); render.t = setTimeout(() => { query = e.target.value; filter(); }, 180); };
+    document.querySelectorAll(".chip").forEach(c => c.onclick = () => { cat = c.dataset.c; haptic();
+      document.querySelectorAll(".chip").forEach(x => x.classList.toggle("on", x === c)); filter(); });
+    filter();
+    new IntersectionObserver(es => { if (es[0].isIntersecting) more(); }, {rootMargin: "400px"}).observe($("more"));
+  } else if (page === "stores") {
+    app.innerHTML = `<div class="wrap page on"><div class="head"><h2>${TX.stores}</h2><span class="count">${D.stores.length}</span></div>${grouped(D.stores, storeCard)}</div>`;
+  } else if (page === "masters") {
+    app.innerHTML = `<div class="wrap page on"><div class="head"><h2>${TX.masters}</h2><span class="count">${D.masters.length}</span></div>${grouped(D.masters, masterCard)}</div>`;
+  }
+}
+const tile = (ic, t, s, on) => `<button class="tile" onclick="${on}"><div class="ic">${ic}</div><div><b>${t}</b><small>${h(s)}</small></div></button>`;
+
+function grouped(rows, card) {
+  if (!rows.length) return `<div class="empty">${TX.empty}</div>`;
+  const g = {}; rows.forEach(r => (g[r.region || TX.other] = g[r.region || TX.other] || []).push(r));
+  return Object.keys(g).sort().map(k => `<div class="reg">📍 ${h(k)}</div>` + g[k].map(card).join("")).join("");
+}
+const phones = s => String(s || "").split(/[;,]|\s+(?=\+)/).map(x => x.trim()).filter(Boolean);
+const tel = p => "tel:" + p.replace(/[^\d+]/g, "");
+function storeCard(r) {
+  const ph = phones(r.phone);
+  return `<div class="card"><h3>🏪 ${h(r.name)}</h3>
+    ${r.address ? `<div class="row"><span>🏠</span><span>${h(r.address)}</span></div>` : ""}
+    ${ph.map(p => `<div class="row"><span>📞</span><a href="${tel(p)}">${h(p)}</a></div>`).join("")}
+    ${r.note ? `<div class="note">👤 ${h(r.note)}</div>` : ""}
+    <div class="btns">${/^https?:\/\//.test(r.map_url) ? `<button class="btn pri" data-u="${h(r.map_url)}" onclick="openUrl(this.dataset.u)">${TX.map}</button>` : ""}
+    ${ph[0] ? `<a class="btn" href="${tel(ph[0])}">${TX.call}</a>` : ""}</div></div>`;
+}
+function masterCard(r) {
+  const ph = phones(r.phone), tgu = (r.telegram || "").trim();
+  return `<div class="card"><h3>🛠 ${h(r.name)}</h3>
+    ${ph.map(p => `<div class="row"><span>📞</span><a href="${tel(p)}">${h(p)}</a></div>`).join("")}
+    ${tgu ? `<div class="row"><span>✈️</span><span>${h(tgu.startsWith("@") || tgu.startsWith("http") ? tgu : "@" + tgu)}</span></div>` : ""}
+    ${r.note ? `<div class="note">${h(r.note)}</div>` : ""}
+    <div class="btns">${ph[0] ? `<a class="btn pri" href="${tel(ph[0])}">${TX.call}</a>` : ""}${tgu ? `<button class="btn" data-u="${h(tgu)}" onclick="openTg(this.dataset.u)">${TX.write}</button>` : ""}</div></div>`;
+}
+
+/* ---------- tovarlar ---------- */
+function filter() {
+  const q = query.trim().toLowerCase(), qn = norm(q), qs = qn.replace(/^(vigi|tplink|tp)/, "");
+  list = D.products.filter(p => (!cat || p.c === cat) && (!q || norm(p.m).includes(qn) || (qs && norm(p.m).includes(qs)) || p.n.toLowerCase().includes(q)));
+  if (qn) list.sort((a, b) => score(b, qn) - score(a, qn));
+  $("pc").textContent = list.length + " " + TX.found;
+  shown = 0; $("grid").innerHTML = list.length ? "" : `<div class="empty" style="grid-column:1/-1">🔎 ${TX.none}</div>`; more();
+}
+const score = (p, qn) => { const m = norm(p.m); return m === qn ? 3 : m.startsWith(qn) ? 2 : m.includes(qn) ? 1 : 0; };
+function more() {
+  if (!$("grid") || shown >= list.length) return;
+  const part = list.slice(shown, shown + 40); shown += part.length;
+  $("grid").insertAdjacentHTML("beforeend", part.map(p => `<button class="pc" onclick="openProd(${p.id})">
+    <div class="im">${p.i ? `<img loading="lazy" src="img/${p.i}" alt="">` : '<span class="no">📦</span>'}</div>
+    <div class="tx"><div class="md">${h(p.m)}</div><div class="nm">${h(p.n)}</div>
+    <div class="pr ${p.p ? "" : "ask"}">${p.p ? money(p.p) : TX.ask}</div></div></button>`).join(""));
+}
+function openProd(id) {
+  const p = D.products.find(x => x.id === id); if (!p) return; haptic();
+  $("sheet").innerHTML = `<div class="pic">${p.i ? `<img src="img/${p.i}" alt="">` : '<span style="font-size:60px;opacity:.3">📦</span>'}<button class="close" onclick="closeSheet()">✕</button></div>
+    <div class="body"><div class="cat">${h(p.c)}</div><h2>${h(p.m)}</h2><div class="sub">${h(p.n)}</div>
+      <div class="price"><b>${p.p ? money(p.p) : TX.ask}</b><small>${TX.asof.replace("{d}", h(D.meta.updated.slice(0, 10)))}</small></div>
+      ${p.s.length ? `<div class="reg" style="margin-top:0">${TX.specs}</div><div class="specs">${p.s.map(([k, v]) => `<div><span>${h(k)}</span><b>${h(v)}</b></div>`).join("")}</div>` : ""}
+      ${p.f.length ? `<div class="reg">${TX.feats}</div><div class="feats">${p.f.map(f => `<span>${h(f)}</span>`).join("")}</div>` : ""}
+      ${D.meta.supplier ? `<div class="sup">${TX.supplier}: ${h(D.meta.supplier)}</div>` : ""}</div>`;
+  $("bar").innerHTML = `<button class="btn pri" onclick="act('p_${p.id}','product')">${TX.passport}</button>` +
+    (FEAT.has("stores") ? `<button class="btn" onclick="closeSheet();go('stores')">${TX.buy}</button>` : "");
+  $("sheet").scrollTop = 0; $("sheet").classList.add("on"); syncBack();
+}
+function closeSheet() { $("sheet").classList.remove("on"); syncBack(); }
+
+/* ---------- yuklash ---------- */
+async function load() {
+  $("ldTxt").textContent = TX.load;
+  try {
+    const r = await fetch(`data/${LANG}.json?v=${encodeURIComponent(VER)}`, {cache: "no-cache"});
+    if (!r.ok) throw new Error(r.status);
+    D = await r.json();
+  } catch (e) {
+    $("app").innerHTML = `<div class="loader"><div style="text-align:center">⚠️<br>${TX.err}<br><br><button class="btn pri" onclick="location.reload()">${TX.retry}</button></div></div>`;
+    return;
+  }
+  $("tabs").innerHTML = TABS.map(([id, ic, t]) => `<button class="tab ${id === page ? "on" : ""}" data-p="${id}"><span class="ti">${ic}</span>${t}</button>`).join("");
+  $("tabs").style.display = TABS.length > 1 ? "flex" : "none";
+  document.querySelectorAll(".tab").forEach(t => t.onclick = () => go(t.dataset.p));
+  const start = Q.get("p"); if (start && TABS.some(t => t[0] === start)) page = start;
+  go(page);
+}
+load();
+</script>
+</body>
+</html>
