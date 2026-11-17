@@ -114,6 +114,27 @@ a{color:var(--accent);text-decoration:none}
 .bar{position:fixed;left:0;right:0;bottom:0;z-index:60;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 35%);display:none;gap:10px}
 .sheet.on ~ .bar{display:flex}
 
+/* yangiliklar / reklama */
+.ads{margin:0 -16px 16px;position:relative}
+.ads-track{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 16px;scrollbar-width:none}
+.ads-track::-webkit-scrollbar{display:none}
+.ad{flex:none;width:100%;scroll-snap-align:center;position:relative;border-radius:20px;overflow:hidden;aspect-ratio:16/8.5;text-align:left;
+  background:linear-gradient(135deg,#0a6cff,#7b5cff 60%,#00c8ff);border:1px solid var(--line);color:#fff}
+.ad img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ad .ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 35%,rgba(0,0,0,.78))}
+.ad.noimg .ov{background:radial-gradient(120% 120% at 100% 0%,rgba(255,255,255,.18),transparent 60%)}
+.ad .cap{position:absolute;left:0;right:0;bottom:0;padding:14px 16px}
+.ad .tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.8px;padding:3px 8px;border-radius:6px;background:rgba(255,255,255,.22);margin-bottom:6px;backdrop-filter:blur(6px)}
+.ad b{display:block;font-size:17px;line-height:1.25;text-shadow:0 1px 8px rgba(0,0,0,.4)}
+.ad small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;opacity:.9;font-size:12.5px;margin-top:3px}
+.ad.noimg b{font-size:19px}
+.dots{display:flex;justify-content:center;gap:6px;margin-top:9px}
+.dots i{width:6px;height:6px;border-radius:3px;background:var(--line);transition:all .25s}
+.dots i.on{width:18px;background:var(--accent)}
+.newsbody{white-space:pre-wrap;line-height:1.55;font-size:15px}
+.star{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.6px;color:#1a1200;background:#ffc94d;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-align:2px}
+.card.feat{border-color:rgba(255,201,77,.55);background:linear-gradient(135deg,rgba(255,201,77,.10),transparent 60%),var(--card)}
+
 /* pastki menyu */
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;background:rgba(10,17,27,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
 .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;color:var(--hint);font-size:11px;border-radius:12px}
@@ -164,7 +185,7 @@ const TX = {
       ask:"Narxini so'rang", sum:"so'm", asof:"Narx {d} holatiga", passport:"📄 Pasport (PDF)", buy:"🏪 Qayerdan olish",
       specs:"Xarakteristikalar", feats:"Imkoniyatlar", map:"🗺 Xaritada", call:"📞 Qo'ng'iroq", write:"✈️ Yozish",
       supplier:"Rasmiy yetkazib beruvchi", updated:"Ma'lumot yangilangan", empty:"Hozircha ro'yxat bo'sh",
-      sent:"Botga o'tilmoqda...", locked:"Bu bo'lim siz uchun yopiq", load:"Yuklanmoqda...", err:"Ma'lumot yuklanmadi. Internetni tekshiring.", retry:"Qayta urinish", other:"Boshqa"},
+      sent:"Botga o'tilmoqda...", locked:"Bu bo'lim siz uchun yopiq", load:"Yuklanmoqda...", err:"Ma'lumot yuklanmadi. Internetni tekshiring.", retry:"Qayta urinish", other:"Boshqa", news:"YANGILIK", mainStores:"Asosiy manzillar", main:"ASOSIY"},
   ru:{hi:"Здравствуйте", hero:"Поддержка камер TP-Link VIGI, товары и цены — в одном месте.",
       home:"Главная", prod:"Товары", stores:"Адреса", masters:"Мастера",
       reset:"Сброс камеры", resetS:"Отправьте фото QR-кода — специалист ответит",
@@ -174,7 +195,7 @@ const TX = {
       ask:"Цену уточняйте", sum:"сум", asof:"Цена на {d}", passport:"📄 Паспорт (PDF)", buy:"🏪 Где купить",
       specs:"Характеристики", feats:"Особенности", map:"🗺 На карте", call:"📞 Позвонить", write:"✈️ Написать",
       supplier:"Официальный поставщик", updated:"Данные обновлены", empty:"Список пока пуст",
-      sent:"Переход в бот...", locked:"Этот раздел для вас недоступен", load:"Загрузка...", err:"Не удалось загрузить данные. Проверьте интернет.", retry:"Повторить", other:"Другое"},
+      sent:"Переход в бот...", locked:"Этот раздел для вас недоступен", load:"Загрузка...", err:"Не удалось загрузить данные. Проверьте интернет.", retry:"Повторить", other:"Другое", news:"НОВОСТЬ", mainStores:"Основные адреса", main:"ОСНОВНОЙ"},
   en:{hi:"Hello", hero:"TP-Link VIGI camera support, products and prices — all in one place.",
       home:"Home", prod:"Products", stores:"Stores", masters:"Installers",
       reset:"Reset a camera", resetS:"Send a photo of the QR code — a specialist will reply",
@@ -184,7 +205,7 @@ const TX = {
       ask:"Ask for price", sum:"UZS", asof:"Price as of {d}", passport:"📄 Datasheet (PDF)", buy:"🏪 Where to buy",
       specs:"Specifications", feats:"Features", map:"🗺 On map", call:"📞 Call", write:"✈️ Message",
       supplier:"Official supplier", updated:"Data updated", empty:"The list is empty for now",
-      sent:"Opening the bot...", locked:"This section is not available to you", load:"Loading...", err:"Could not load data. Check your connection.", retry:"Retry", other:"Other"},
+      sent:"Opening the bot...", locked:"This section is not available to you", load:"Loading...", err:"Could not load data. Check your connection.", retry:"Retry", other:"Other", news:"NEWS", mainStores:"Main stores", main:"MAIN"},
 }[LANG];
 document.documentElement.lang = LANG;
 
@@ -244,11 +265,12 @@ function render() {
     if (FEAT.has("me")) { tiles.push(tile("👤", TX.me, TX.meS, "act('me','me')")); tiles.push(tile("📄", TX.war, TX.warS, "act('war','me')")); }
     const small = tiles.filter(x => !x.includes("tile big")).length;
     if (small % 2) tiles[tiles.length - 1] = tiles[tiles.length - 1].replace('class="tile"', 'class="tile wide"');
-    app.innerHTML = `<div class="wrap page on">
+    app.innerHTML = `<div class="wrap page on">${ads()}
       <div class="hero"><div class="logo"><i>V</i>VIGI SUPPORT</div>
         <h1>${TX.hi}${u && u.first_name ? `, <span class="hello">${h(u.first_name)}</span>` : ""} 👋</h1><p>${TX.hero}</p></div>
       <div class="tiles">${tiles.join("")}</div>
       <div class="foot">${D.meta.supplier ? `${TX.supplier}: <b>${h(D.meta.supplier)}</b><br>` : ""}${TX.updated}: ${h(D.meta.updated)}</div></div>`;
+    startAds();
   } else if (page === "prod") {
     const cats = [...new Set(D.products.map(p => p.c).filter(Boolean))];
     app.innerHTML = `<div class="wrap page on">
@@ -262,7 +284,10 @@ function render() {
     filter();
     new IntersectionObserver(es => { if (es[0].isIntersecting) more(); }, {rootMargin: "400px"}).observe($("more"));
   } else if (page === "stores") {
-    app.innerHTML = `<div class="wrap page on"><div class="head"><h2>${TX.stores}</h2><span class="count">${D.stores.length}</span></div>${grouped(D.stores, storeCard)}</div>`;
+    const main = D.stores.filter(s => s.star), rest = D.stores.filter(s => !s.star);
+    app.innerHTML = `<div class="wrap page on"><div class="head"><h2>${TX.stores}</h2><span class="count">${D.stores.length}</span></div>
+      ${main.length ? `<div class="reg" style="color:#ffc94d">⭐ ${TX.mainStores}</div>${main.map(storeCard).join("")}` : ""}
+      ${grouped(rest, storeCard)}</div>`;
   } else if (page === "masters") {
     app.innerHTML = `<div class="wrap page on"><div class="head"><h2>${TX.masters}</h2><span class="count">${D.masters.length}</span></div>${grouped(D.masters, masterCard)}</div>`;
   }
@@ -278,7 +303,8 @@ const phones = s => String(s || "").split(/[;,]|\s+(?=\+)/).map(x => x.trim()).f
 const tel = p => "tel:" + p.replace(/[^\d+]/g, "");
 function storeCard(r) {
   const ph = phones(r.phone);
-  return `<div class="card"><h3>🏪 ${h(r.name)}</h3>
+  return `<div class="card ${r.star ? "feat" : ""}"><h3>🏪 ${h(r.name)}${r.star ? `<span class="star">⭐ ${TX.main}</span>` : ""}</h3>
+    ${r.star && r.region ? `<div class="row"><span>📍</span><span>${h(r.region)}</span></div>` : ""}
     ${r.address ? `<div class="row"><span>🏠</span><span>${h(r.address)}</span></div>` : ""}
     ${ph.map(p => `<div class="row"><span>📞</span><a href="${tel(p)}">${h(p)}</a></div>`).join("")}
     ${r.note ? `<div class="note">👤 ${h(r.note)}</div>` : ""}
@@ -323,7 +349,35 @@ function openProd(id) {
     (FEAT.has("stores") ? `<button class="btn" onclick="closeSheet();go('stores')">${TX.buy}</button>` : "");
   $("sheet").scrollTop = 0; $("sheet").classList.add("on"); syncBack();
 }
-function closeSheet() { $("sheet").classList.remove("on"); syncBack(); }
+function closeSheet() { $("sheet").classList.remove("on"); $("bar").style.display = ""; syncBack(); }
+
+/* ---------- yangiliklar (reklama banneri) ---------- */
+function ads() {
+  const N = D.news || []; if (!N.length) return "";
+  return `<div class="ads"><div class="ads-track" id="adsT">${N.map(n => `<button class="ad ${n.i ? "" : "noimg"}" onclick="openNews(${n.id})">
+      ${n.i ? `<img src="news/${n.i}" alt="">` : ""}<div class="ov"></div>
+      <div class="cap"><span class="tag">📢 ${TX.news}</span><b>${h(n.t || n.b.split("\n")[0])}</b>${n.t && n.b ? `<small>${h(n.b)}</small>` : ""}</div></button>`).join("")}</div>
+    ${N.length > 1 ? `<div class="dots" id="adsD">${N.map((_, i) => `<i class="${i ? "" : "on"}"></i>`).join("")}</div>` : ""}</div>`;
+}
+function startAds() {
+  const tr = $("adsT"); clearInterval(startAds.t); if (!tr || (D.news || []).length < 2) return;
+  const dots = [...document.querySelectorAll("#adsD i")];
+  const cur = () => Math.round(tr.scrollLeft / tr.clientWidth);
+  tr.onscroll = () => { const k = cur(); dots.forEach((d, i) => d.classList.toggle("on", i === k)); };
+  let pause = 0; tr.ontouchstart = () => pause = Date.now();
+  startAds.t = setInterval(() => { if (!document.body.contains(tr)) return clearInterval(startAds.t);
+    if (Date.now() - pause < 8000 || $("sheet").classList.contains("on")) return;
+    const k = (cur() + 1) % dots.length;
+    tr.scrollTo({left: tr.children[k].offsetLeft - 16, behavior: "smooth"}); }, 5000);
+}
+function openNews(id) {
+  const n = (D.news || []).find(x => x.id === id); if (!n) return; haptic();
+  $("sheet").innerHTML = `${n.i ? `<div class="pic" style="height:auto;background:#000"><img src="news/${n.i}" style="max-width:100%;max-height:none;width:100%"><button class="close" onclick="closeSheet()">✕</button></div>`
+      : `<div style="position:relative;height:56px"><button class="close" onclick="closeSheet()">✕</button></div>`}
+    <div class="body"><div class="cat">📢 ${TX.news} · ${h(n.d)}</div>${n.t ? `<h2>${h(n.t)}</h2>` : ""}<div class="newsbody">${h(n.b)}</div></div>`;
+  $("bar").innerHTML = ""; $("bar").style.display = "none";
+  $("sheet").scrollTop = 0; $("sheet").classList.add("on"); syncBack();
+}
 
 /* ---------- yuklash ---------- */
 async function load() {
