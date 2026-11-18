@@ -135,6 +135,16 @@ a{color:var(--accent);text-decoration:none}
 .star{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.6px;color:#1a1200;background:#ffc94d;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-align:2px}
 .card.feat{border-color:rgba(255,201,77,.55);background:linear-gradient(135deg,rgba(255,201,77,.10),transparent 60%),var(--card)}
 
+/* savol-javoblar */
+.qa{padding:0;overflow:hidden}
+.qa .q{width:100%;display:flex;align-items:center;gap:12px;padding:15px;text-align:left;font-weight:600;font-size:15px}
+.qa .q span{flex:1}
+.qa .q i{font-style:normal;flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:rgba(0,200,255,.12);color:var(--accent);font-size:18px;transition:transform .25s}
+.qa .a{display:none;padding:0 15px 15px;color:#c6d3e0}
+.qa.open .a{display:block;animation:fade .25s ease}
+.qa.open .q i{transform:rotate(45deg)}
+body.light .qa .a{color:#33475c}
+
 /* pastki menyu */
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;background:rgba(10,17,27,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
 .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;color:var(--hint);font-size:11px;border-radius:12px}
@@ -170,7 +180,7 @@ const tg = window.Telegram && window.Telegram.WebApp;
 const Q = new URLSearchParams(location.search);
 const LANG = ["uz","ru","en"].includes(Q.get("l")) ? Q.get("l")
   : ({ru:"ru",uk:"ru",be:"ru",kk:"ru",en:"en"}[(tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code || "").slice(0,2)] || "uz");
-const ALLF = ["reset","product","stores","me","master"];
+const ALLF = ["reset","product","stores","me","master","faq"];
 const FEAT = new Set(Q.get("f") != null ? Q.get("f").split(",").filter(Boolean) : ALLF);
 const FROM_KB = Q.get("k") === "1";
 const VER = Q.get("v") || Date.now();
@@ -185,7 +195,8 @@ const TX = {
       ask:"Narxini so'rang", sum:"so'm", asof:"Narx {d} holatiga", passport:"📄 Pasport (PDF)", buy:"🏪 Qayerdan olish",
       specs:"Xarakteristikalar", feats:"Imkoniyatlar", map:"🗺 Xaritada", call:"📞 Qo'ng'iroq", write:"✈️ Yozish",
       supplier:"Rasmiy yetkazib beruvchi", updated:"Ma'lumot yangilangan", empty:"Hozircha ro'yxat bo'sh",
-      sent:"Botga o'tilmoqda...", locked:"Bu bo'lim siz uchun yopiq", load:"Yuklanmoqda...", err:"Ma'lumot yuklanmadi. Internetni tekshiring.", retry:"Qayta urinish", other:"Boshqa", news:"YANGILIK", mainStores:"Asosiy manzillar", main:"ASOSIY"},
+      sent:"Botga o'tilmoqda...", locked:"Bu bo'lim siz uchun yopiq", load:"Yuklanmoqda...", err:"Ma'lumot yuklanmadi. Internetni tekshiring.", retry:"Qayta urinish", other:"Boshqa", news:"YANGILIK", mainStores:"Asosiy manzillar", main:"ASOSIY",
+      order:"🛒 Buyurtma berish", faq:"Savol-javob", faqS:"Ko'p so'raladigan savollar", pdf:"📄 PDF javobni ochish", faqEmpty:"Savol-javoblar tez orada qo'shiladi"},
   ru:{hi:"Здравствуйте", hero:"Поддержка камер TP-Link VIGI, товары и цены — в одном месте.",
       home:"Главная", prod:"Товары", stores:"Адреса", masters:"Мастера",
       reset:"Сброс камеры", resetS:"Отправьте фото QR-кода — специалист ответит",
@@ -195,7 +206,8 @@ const TX = {
       ask:"Цену уточняйте", sum:"сум", asof:"Цена на {d}", passport:"📄 Паспорт (PDF)", buy:"🏪 Где купить",
       specs:"Характеристики", feats:"Особенности", map:"🗺 На карте", call:"📞 Позвонить", write:"✈️ Написать",
       supplier:"Официальный поставщик", updated:"Данные обновлены", empty:"Список пока пуст",
-      sent:"Переход в бот...", locked:"Этот раздел для вас недоступен", load:"Загрузка...", err:"Не удалось загрузить данные. Проверьте интернет.", retry:"Повторить", other:"Другое", news:"НОВОСТЬ", mainStores:"Основные адреса", main:"ОСНОВНОЙ"},
+      sent:"Переход в бот...", locked:"Этот раздел для вас недоступен", load:"Загрузка...", err:"Не удалось загрузить данные. Проверьте интернет.", retry:"Повторить", other:"Другое", news:"НОВОСТЬ", mainStores:"Основные адреса", main:"ОСНОВНОЙ",
+      order:"🛒 Заказать", faq:"Вопросы", faqS:"Частые вопросы", pdf:"📄 Открыть PDF-ответ", faqEmpty:"Вопросы и ответы скоро появятся"},
   en:{hi:"Hello", hero:"TP-Link VIGI camera support, products and prices — all in one place.",
       home:"Home", prod:"Products", stores:"Stores", masters:"Installers",
       reset:"Reset a camera", resetS:"Send a photo of the QR code — a specialist will reply",
@@ -205,7 +217,8 @@ const TX = {
       ask:"Ask for price", sum:"UZS", asof:"Price as of {d}", passport:"📄 Datasheet (PDF)", buy:"🏪 Where to buy",
       specs:"Specifications", feats:"Features", map:"🗺 On map", call:"📞 Call", write:"✈️ Message",
       supplier:"Official supplier", updated:"Data updated", empty:"The list is empty for now",
-      sent:"Opening the bot...", locked:"This section is not available to you", load:"Loading...", err:"Could not load data. Check your connection.", retry:"Retry", other:"Other", news:"NEWS", mainStores:"Main stores", main:"MAIN"},
+      sent:"Opening the bot...", locked:"This section is not available to you", load:"Loading...", err:"Could not load data. Check your connection.", retry:"Retry", other:"Other", news:"NEWS", mainStores:"Main stores", main:"MAIN",
+      order:"🛒 Order", faq:"FAQ", faqS:"Frequently asked questions", pdf:"📄 Open PDF answer", faqEmpty:"FAQ will be added soon"},
 }[LANG];
 document.documentElement.lang = LANG;
 
@@ -242,7 +255,7 @@ function openTg(user){ const u = String(user).trim().replace(/^@/, "").replace(/
   if (tg) tg.openTelegramLink("https://t.me/" + u); else open("https://t.me/" + u); }
 
 /* ---------- navigatsiya ---------- */
-const TABS = [["home","🏠",TX.home],["prod","📦",TX.prod,"product"],["stores","🏪",TX.stores,"stores"],["masters","🛠",TX.masters,"master"]]
+const TABS = [["home","🏠",TX.home],["prod","📦",TX.prod,"product"],["stores","🏪",TX.stores,"stores"],["masters","🛠",TX.masters,"master"],["faq","❓",TX.faq,"faq"]]
   .filter(t => !t[3] || FEAT.has(t[3]));
 function go(p) {
   page = p; haptic();
@@ -262,6 +275,7 @@ function render() {
     if (FEAT.has("product")) tiles.push(tile("📦", TX.prod, `${D.products.length} · ${TX.prodS}`, "go('prod')"));
     if (FEAT.has("stores")) tiles.push(tile("🏪", TX.stores, `${D.stores.length} · ${TX.storesS}`, "go('stores')"));
     if (FEAT.has("master")) tiles.push(tile("🛠", TX.masters, TX.mastersS, "go('masters')"));
+    if (FEAT.has("faq")) tiles.push(tile("❓", TX.faq, TX.faqS, "go('faq')"));
     if (FEAT.has("me")) { tiles.push(tile("👤", TX.me, TX.meS, "act('me','me')")); tiles.push(tile("📄", TX.war, TX.warS, "act('war','me')")); }
     const small = tiles.filter(x => !x.includes("tile big")).length;
     if (small % 2) tiles[tiles.length - 1] = tiles[tiles.length - 1].replace('class="tile"', 'class="tile wide"');
@@ -288,6 +302,13 @@ function render() {
     app.innerHTML = `<div class="wrap page on"><div class="head"><h2>${TX.stores}</h2><span class="count">${D.stores.length}</span></div>
       ${main.length ? `<div class="reg" style="color:#ffc94d">⭐ ${TX.mainStores}</div>${main.map(storeCard).join("")}` : ""}
       ${grouped(rest, storeCard)}</div>`;
+  } else if (page === "faq") {
+    const F = D.faq || [];
+    app.innerHTML = `<div class="wrap page on"><div class="head"><h2>${TX.faqS}</h2><span class="count">${F.length}</span></div>
+      ${F.length ? F.map(f => `<div class="card qa" id="qa${f.id}"><button class="q" onclick="toggleQa(${f.id})"><span>${h(f.q)}</span><i>+</i></button>
+        <div class="a">${f.a ? `<div class="newsbody">${h(f.a)}</div>` : ""}
+        ${f.pdf ? `<div class="btns"><button class="btn pri" data-u="${h(f.pdf)}" onclick="openPdf(this.dataset.u)">${TX.pdf}</button></div>` : ""}</div></div>`).join("")
+        : `<div class="empty">❓ ${TX.faqEmpty}</div>`}</div>`;
   } else if (page === "masters") {
     app.innerHTML = `<div class="wrap page on"><div class="head"><h2>${TX.masters}</h2><span class="count">${D.masters.length}</span></div>${grouped(D.masters, masterCard)}</div>`;
   }
@@ -345,10 +366,12 @@ function openProd(id) {
       ${p.s.length ? `<div class="reg" style="margin-top:0">${TX.specs}</div><div class="specs">${p.s.map(([k, v]) => `<div><span>${h(k)}</span><b>${h(v)}</b></div>`).join("")}</div>` : ""}
       ${p.f.length ? `<div class="reg">${TX.feats}</div><div class="feats">${p.f.map(f => `<span>${h(f)}</span>`).join("")}</div>` : ""}
       ${D.meta.supplier ? `<div class="sup">${TX.supplier}: ${h(D.meta.supplier)}</div>` : ""}</div>`;
-  $("bar").innerHTML = `<button class="btn pri" onclick="act('p_${p.id}','product')">${TX.passport}</button>` +
-    (FEAT.has("stores") ? `<button class="btn" onclick="closeSheet();go('stores')">${TX.buy}</button>` : "");
+  $("bar").innerHTML = `<button class="btn pri" onclick="act('o_${p.id}','product')">${TX.order}</button>` +
+    `<button class="btn" onclick="act('p_${p.id}','product')">${TX.passport}</button>`;
   $("sheet").scrollTop = 0; $("sheet").classList.add("on"); syncBack();
 }
+function toggleQa(id) { haptic(); const el = $("qa" + id); el.classList.toggle("open"); }
+function openPdf(rel) { openUrl(new URL(rel, location.href).href); }
 function closeSheet() { $("sheet").classList.remove("on"); $("bar").style.display = ""; syncBack(); }
 
 /* ---------- yangiliklar (reklama banneri) ---------- */
